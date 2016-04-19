@@ -9,6 +9,7 @@ import java.util.Collections;
 
 public class RussianNumbers {
 
+
     private static final String EDINICHI[] = {"ноль", "один", "два", "три", "четыре",
             "пять", "шесть", "семь", "восемь", "девять"};
     private static final String DESYAT[] = {"десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
