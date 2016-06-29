@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="nickname">Nickname</string>
+    <string name="status">Status</string>
+    <string name="save">Save</string>
+    <string name="chatname">Chat Name ()</string>
+    <string name="smallDescr">This is a chat</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

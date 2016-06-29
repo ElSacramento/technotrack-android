@@ -1,58 +1,86 @@
 package com.example.clay.secondtask;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.View;
-import android.widget.Button;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.HttpURLConnection;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by clay on 17.04.16.
  */
-public class StartActivity extends Activity {
+public class StartActivity extends AppCompatActivity {
 
-    MyAsyncTask someTask;
+    MyAsyncTask downloadTask;
+    MySleepAsyncTask sleepTask;
+    String LOG_TAG = "my_log";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.frame_layout);
+        setContentView(R.layout.main_layout);
+        downloadTask = new MyAsyncTask();
+        sleepTask = new MySleepAsyncTask();
+        downloadTask.execute();
+        sleepTask.execute();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        someTask = new MyAsyncTask();
-        someTask.execute(this);
+    protected void onStop(){
+        super.onStop();
+        Log.d("main_activity", "finish");
+        finish();
     }
 
-    @Override
-    public void onBackPressed(){
-        someTask.cancel(true);
-        this.finish();
-        super.onBackPressed();
-    }
+    class MyAsyncTask extends AsyncTask<Void, Void, Void> {
 
-    class MyAsyncTask extends AsyncTask<StartActivity, Void, Void> {
-
+        ItemContent parsed_json;
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        protected Void doInBackground(Void... params) {
+            parsed_json = new ItemContent().getData();
+            sleepTask.cancel(true);
+            if (parsed_json.SIZE == 0) {
+                Log.d("error", "No Internet connection");
+                return null;
+            }
+
+            Intent listActivity = new Intent(getApplicationContext(), ListActivity.class);
+            startActivity(listActivity);
+            return null;
         }
 
         @Override
-        protected Void doInBackground(StartActivity... params) {
+        protected void onPostExecute(Void par){
+            super.onPostExecute(par);
+            if (parsed_json.SIZE == 0)
+                Toast.makeText(getApplicationContext(), "No Internet connection",  Toast.LENGTH_LONG).show();
+            finish();
+        }
+
+    }
+
+    class MySleepAsyncTask extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
             try {
-                TimeUnit.SECONDS.sleep(2);
-                Intent secondView = new Intent(params[0], ListActivity.class);
-                startActivity(secondView);
-                someTask.cancel(true);
-                finish();
+                TimeUnit.SECONDS.sleep(1);
+                if (this.isCancelled()) return null;
+                TimeUnit.SECONDS.sleep(1);
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
