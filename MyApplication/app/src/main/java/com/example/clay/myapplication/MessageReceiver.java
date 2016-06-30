@@ -76,14 +76,20 @@ public class MessageReceiver {
     }
 
     public static class Auth implements Message {
-        public int status;
+        public int status = -1;
         public String error;
+        public String sid = "";
+        public String uid = "";
 
         @Override
         public void parse(JsonObject json) {
             JsonObject data = json.get("data").getAsJsonObject();
             status = data.get("status").getAsInt();
             error = data.get("error").getAsString();
+            if (status == 0) {
+                sid = data.get("sid").getAsString();
+                uid = data.get("cid").getAsString();
+            }
         }
 
         @Override
@@ -91,7 +97,10 @@ public class MessageReceiver {
             if (status == 0) {
                 Log.d(LOG_TAG, "authorization successful");
             }
-            return Integer.toString(status);
+            StringBuffer result = new StringBuffer();
+            result.append("status: ").append(Integer.toString(status)).append(" sid: ").append(sid).
+                    append(" uid: ").append(uid);
+            return result.toString();
         }
     }
 
